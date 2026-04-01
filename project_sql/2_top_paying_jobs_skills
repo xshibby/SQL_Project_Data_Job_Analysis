@@ -1,0 +1,78 @@
+/* Question: What skills are required for the top-paying data analyst jobs?
+- Use the top 10 highest-paying Data Analyst jobs from first query
+- Add the specific skills required for these roles
+- Why? It provides a detailed look at which high-paying jobs demand certain skills,
+  Helping job seekers understand which skills to develop that align with top salaries
+*/
+
+WITH top_paying_jobs AS (
+  SELECT
+    job_id,
+    job_title,
+    company_dim.name AS company_name,
+    salary_year_avg
+  FROM
+    job_postings_fact
+  LEFT JOIN company_dim ON job_postings_fact.company_id = company_dim.company_id
+  WHERE
+    job_title_short = 'Data Analyst' AND
+    job_location LIKE '%UK' AND
+    salary_year_avg IS NOT NULL
+  ORDER BY
+    salary_year_avg DESC
+  LIMIT
+    10
+)
+
+SELECT
+  top_paying_jobs.*,
+  skills
+FROM
+  top_paying_jobs
+INNER JOIN skills_job_dim ON top_paying_jobs.job_id = skills_job_dim.job_id
+INNER JOIN skills_dim ON skills_job_dim.skill_id = skills_dim.skill_id
+ORDER BY
+  salary_year_avg DESC
+
+/*
+Skill Demand Table
+Skill	Count
+SQL	6
+Python	5
+Excel	3
+MongoDB	2
+SQL Server	2
+Azure	2
+R	2
+AWS	2
+Hadoop	2
+Looker	2
+SAS	2
+Tableau	2
+Oracle	2
+PyTorch	1
+Scala	1
+Pandas	1
+Redshift	1
+Elasticsearch	1
+PostgreSQL	1
+C++	1
+NumPy	1
+TensorFlow	1
+Kafka	1
+Aurora	1
+NoSQL	1
+Flow	1
+MySQL	1
+Power BI	1
+VBA	1
+JavaScript	1
+Sheets	1
+PowerPoint	1
+Key Takeaways
+Core stack dominance: SQL and Python clearly lead, which aligns with typical data analyst expectations.
+Traditional tools still relevant: Excel is still heavily required.
+Cloud + data platforms: Azure, AWS, Hadoop, and database variants (SQL Server, Oracle, MongoDB) show consistent demand.
+Visualization tools: Tableau and Looker appear multiple times, but Power BI is surprisingly low in this sample.
+Long tail of niche tools: Many skills appear only once, suggesting specialization rather than baseline requirements.
+*/
